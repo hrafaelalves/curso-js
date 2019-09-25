@@ -74,9 +74,7 @@ class User {
     static getUsersStorage(){
         let users = [];
 
-        // if(sessionStorage.getItem("users")){
         if(localStorage.getItem("users")){
-            // users = JSON.parse(sessionStorage.getItem("users"));
             users = JSON.parse(localStorage.getItem("users"));
         }
 
@@ -84,23 +82,28 @@ class User {
     }
     
     getNewId(){
-       if(!window.id) window.id = 0;
 
-       id++;
+       let usersID = parseInt(localStorage.getItem("usersID"));
 
-       return id;
+       if(!usersID > 0) usersID = 0;
+
+       usersID++;
+
+       localStorage.setItem("usersID", usersID);
+
+       return usersID;
     }
 
     save(){
 
         let users = User.getUsersStorage();
 
-        if(this.id > 0){
+        if(this.id > 0){ //pega da propriedade pelo get
             
             users.map(u => {
                 
-                if(u._id === this.id){
-                    u = this;
+                if(u._id === this.id){ // this.id é do objeto users do map
+                    Object.assign(u, this);
                 }
 
                 return u;
@@ -114,5 +117,23 @@ class User {
 
 
         localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    remove(){
+
+        let users = User.getUsersStorage();
+
+        users.forEach((userData, index) => {
+
+            if(this._id == userData._id){
+
+                users.splice(index, 1);
+
+            }
+
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
+
     }
 }
